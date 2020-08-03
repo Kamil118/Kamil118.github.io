@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>
+    <title>phaser testa</title>
+    <script src="phaser.js"></script>
+</head>
+<body>
+    <script>
+        class Car extends Phaser.GameObjects.Sprite {
+            constructor (scene, x, y) {
+                super(scene, x, y, "car");
+                scene.add.existing(this);
+                this.speed = 0;
+                this.ACCELERATION = 0.5;
+                this.BACKCELERATION = -0.3;
+                this.SPEEDLIMIT = 10;
+                this.BACKLIMIT = -3;
+                this.BASEDECELERATION = 0.1;
+                this.ROTATIONSPEED = 3;
+            }
+        }
+        var config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            screenwrap: 50,
+            physics: {
+                default: 'matter',
+                arcade: {
+                },
+                matter:{
+                    gravity:false
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+    
+        var game = new Phaser.Game(config);
+
+        var platforms;
+        var player;
+        var cursors;
+    
+        function preload ()
+        {
+            this.load.image('car', 'assets/car.png');
+        }
+    
+        function create ()
+        {
+            player = new Car(this, 300, 300);
+            cursors = this.input.keyboard.createCursorKeys();
+            player = this.matter.add.gameObject(player);
+        }
+        function update () {
+            if(cursors.up.isDown && player.speed < player.SPEEDLIMIT){
+                player.speed += player.ACCELERATION;
+            }
+            if(cursors.down.isDown && player.speed > player.BACKLIMIT){
+                player.speed += player.BACKCELERATION;
+            }
+            if(cursors.left.isDown){
+                player.angle -= player.ROTATIONSPEED;
+            }
+            if(cursors.right.isDown){
+                player.angle += player.ROTATIONSPEED;
+            }
+            
+            player.setVelocityY(-player.speed*Math.cos(player.rotation));
+            player.setVelocityX(player.speed*Math.sin(player.rotation))
+            
+            if(player.speed > 0){
+                player.speed-=player.BASEDECELERATION;
+                if(player.speed < 0) player.speed = 0;
+            }
+            if(player.speed < 0){
+                player.speed+=player.BASEDECELERATION;
+                if(player.speed > 0) player.speed = 0;
+            }
+            if(player.x < -config.screenwrap) player.x = config.width+config.screenwrap;
+            if(player.x > config.width+config.screenwrap) player.x = -config.screenwrap;
+            if(player.y < -config.screenwrap) player.y = config.height+config.screenwrap;
+            if(player.y > config.height+config.screenwrap) player.y = -config.screenwrap;
+        }
+        </script>
+</body>
