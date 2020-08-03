@@ -63,10 +63,10 @@
             if(cursors.down.isDown && player.speed > player.BACKLIMIT){
                 player.speed += player.BACKCELERATION;
             }
-            if(cursors.left.isDown){
+            if(cursors.left.isDown && player.speed != 0 ){
                 player.angle -= player.ROTATIONSPEED;
             }
-            if(cursors.right.isDown){
+            if(cursors.right.isDown && player.speed != 0){
                 player.angle += player.ROTATIONSPEED;
             }
             
