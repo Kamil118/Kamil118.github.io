@@ -28,7 +28,10 @@
                 arcade: {
                 },
                 matter:{
-                    gravity:false
+                    gravity:false,
+                    plugins: {
+                        wrap:true
+                    }
                 }
             },
             scene: {
@@ -45,6 +48,17 @@
         var player;
         var cursors;
         var walls = [];
+        var wrapBounds = {
+            wrap: {
+                min: {
+                    x:0,y:0
+                },
+                max:{
+                    x:config.width,
+                    y:config.height
+                }
+            }
+        }
     
         function preload ()
         {
@@ -58,12 +72,15 @@
             cursors = this.input.keyboard.createCursorKeys();
 
             player = new Car(this, 300, 300);
-            player = this.matter.add.gameObject(player);
+            player = this.matter.add.gameObject(player, {restitution: 0.9, plugin: wrapBounds});
+            player.setFrictionAir(player.BASEDECELERATION*0.3);
+            console.log(player.body);
+            
 
             walls.push(this.add.rectangle(400,400,100,100,0xffffff,1));
-            walls.push(this.add.rectangle(100,200,210,10,0xffffff,1));
+            walls.push(this.add.rectangle(50,200,170,10,0xffffff,1));
             walls.push(this.add.rectangle(200,100,10,200,0xffffff,1));
-            walls.forEach(wall => this.matter.add.gameObject(wall,{label:"wall",isStatic:true}));
+            walls.forEach(wall => this.matter.add.gameObject(wall,{label:"wall",isStatic:true,plugin:wrapBounds}));
             
         }
         function update () {
@@ -80,22 +97,24 @@
             if(cursors.right.isDown && player.speed != 0){
                 player.angle += player.ROTATIONSPEED;
             }
+
+            if(Math.abs(player.speed) < 0.01) player.speed=0;
             
             player.setVelocityY(-player.speed*Math.cos(player.rotation));
             player.setVelocityX(player.speed*Math.sin(player.rotation))
             
-            if(player.speed > 0){
+            /*if(player.speed > 0){
                 player.speed-=player.BASEDECELERATION;
                 if(player.speed < 0) player.speed = 0;
             }
             if(player.speed < 0){
                 player.speed+=player.BASEDECELERATION;
                 if(player.speed > 0) player.speed = 0;
-            }
-            if(player.x < -config.screenwrap) player.x = config.width+config.screenwrap;
+            }*/
+            /*if(player.x < -config.screenwrap) player.x = config.width+config.screenwrap;
             if(player.x > config.width+config.screenwrap) player.x = -config.screenwrap;
             if(player.y < -config.screenwrap) player.y = config.height+config.screenwrap;
-            if(player.y > config.height+config.screenwrap) player.y = -config.screenwrap;
+            if(player.y > config.height+config.screenwrap) player.y = -config.screenwrap;*/
         }
         </script>
 </body>
