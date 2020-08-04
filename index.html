@@ -44,19 +44,30 @@
         var platforms;
         var player;
         var cursors;
+        var walls = [];
     
         function preload ()
         {
             this.load.image('car', 'assets/car.png');
+            this.load.image('wall5x1', 'assets/wall_50x10.png');
+            this.load.json('wallConfig', 'assets/wall.json')
         }
     
         function create ()
         {
-            player = new Car(this, 300, 300);
             cursors = this.input.keyboard.createCursorKeys();
+
+            player = new Car(this, 300, 300);
             player = this.matter.add.gameObject(player);
+
+            walls.push(this.add.rectangle(400,400,100,100,0xffffff,1));
+            walls.push(this.add.rectangle(100,200,210,10,0xffffff,1));
+            walls.push(this.add.rectangle(200,100,10,200,0xffffff,1));
+            walls.forEach(wall => this.matter.add.gameObject(wall,{label:"wall",isStatic:true}));
+            
         }
         function update () {
+            player.speed = Math.sqrt(player.body.velocity.x*player.body.velocity.x+player.body.velocity.y*player.body.velocity.y) * Math.sign(player.speed);
             if(cursors.up.isDown && player.speed < player.SPEEDLIMIT){
                 player.speed += player.ACCELERATION;
             }
