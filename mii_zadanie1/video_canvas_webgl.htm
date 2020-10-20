@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Kamil Suchecki </title>
+
+    <link href="css/video.css" rel="stylesheet" type="text/css">
+
+    <meta charset="utf-8">
+	<script src="js/three.js"></script>
+	<script src="js/my_scene.js"></script>
+	
+
+<script type="text/javascript">
+
+
+	var canvas;
+	var ctx;
+	var abosulet_ctx
+	var videoElement;
+	var rotation_active = false;
+	var roattion_offset = 0;
+	
+    
+
+	function animate() {
+		var scale = 0.5;
+		var frame_distance = 10;
+		var font = "Arial";
+		var font_size = "10px";
+		var text = "Kamil Suchecki"
+		var text_offset = 20;
+		var rotation_speed = Math.PI/180;
+
+		var positionX = canvas.width/2 * (1-scale);
+		var positionY = canvas.height/2 * (1-scale);
+		var width = canvas.width * scale;
+		var height = canvas.height * scale;
+
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+
+		ctx.ro
+
+		ctx.font = font_size + " " + font;
+		ctx.textAlign = "center";
+		ctx.fillText(text,positionX+width/2,positionY+height+frame_distance+text_offset);
+
+		if(rotation_active){
+			roattion_offset += rotation_speed;
+		}
+		ctx.translate(positionX+width/2,positionY+height/2);
+		ctx.rotate(roattion_offset);
+		ctx.translate(-(positionX+width/2),-(positionY+height/2));
+
+		ctx.beginPath();
+		ctx.rect(positionX-frame_distance, positionY-frame_distance,2*frame_distance+width,2*frame_distance+height);
+		ctx.stroke();
+
+		ctx.drawImage(videoElement,positionX,positionY,width,height);
+
+		ctx.translate(positionX+width/2,positionY+height/2);
+		ctx.rotate(-roattion_offset);
+		ctx.translate(-(positionX+width/2),-(positionY+height/2));
+
+		requestAnimationFrame(animate); //funkcja animate() bedzie wywolywana 60 razy na sekunde
+	}
+
+	function canvas_rotator(event){
+		rotation_active = !rotation_active;
+	}
+
+
+	function load() {
+
+	        canvas = document.getElementById("myCanvas");		
+        	ctx = canvas.getContext('2d');
+			videoElement= document.getElementById("video_file");
+			canvas.addEventListener("click",canvas_rotator)
+			animate();
+			init();
+	}
+
+</script>
+
+
+</head>
+
+<body onload = "load();"> 
+
+	<h1>Suchecki Kamil - HTML5</h1>
+
+	<div id="div_video">  
+		<p>video</p> 
+		<video controls="true" loop="true" id="video_file">
+			<source src="video.mp4" type="video/mp4">
+			<source src="video.webm" type="video/webm">
+		</video>
+	</div>
+
+	<div id="div_canvas" >	
+		<p>canvas</p>
+		<canvas id="myCanvas">
+		</canvas>
+		
+	</div>
+
+	<div id="div_webgl">
+              
+	</div>
+
+</body> 
+</html>
+ 
